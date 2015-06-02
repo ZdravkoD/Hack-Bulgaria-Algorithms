@@ -1,0 +1,85 @@
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+
+using namespace std;
+
+int LenAlphabet, LenKey, LenEncr;
+string Message, Alphabet, EncryptedMessage, Key;
+int *MessageIndexes, *KeyIndexes, *EncrIndexes;
+
+void SwapHalves(string &s);
+void GetStuff();
+void GetIndexes();
+
+
+void SwapHalves(string &s)
+{
+	int len=s.length();
+	s = s.substr(len/2,len) + s.substr(0,len/2);
+}
+
+void GetStuff()
+{
+	LenAlphabet = atoi( Message.substr( 0, Message.find('~') ).c_str() );
+	Message.erase(0, Message.find('~')+1);
+
+	Alphabet = Message.substr(0, LenAlphabet);
+	Message.erase(0, LenAlphabet);
+
+	LenKey = atoi( Message.substr( Message.find('~')+1, Message.length() ).c_str() );
+	Message.erase( Message.find('~'), Message.length() );
+
+	Key = Message.substr(Message.length()-LenKey, LenKey);
+	Message.erase(Message.length()-LenKey, LenKey);
+
+	EncryptedMessage = Message;
+
+	LenEncr = EncryptedMessage.length();
+	int TempLenKey = LenKey;
+
+	while(TempLenKey<LenEncr)
+	{
+		Key += Key[TempLenKey-LenKey];
+		TempLenKey++;
+	}
+
+	GetIndexes();
+}
+
+void GetIndexes()
+{
+	KeyIndexes = new int[LenEncr];
+	EncrIndexes = new int[LenEncr];
+	MessageIndexes = new int[LenEncr];
+
+	for(int i=0;i<LenEncr;i++)
+	{
+		KeyIndexes[i] = Alphabet.find(Key[i]);
+		EncrIndexes[i] = Alphabet.find(EncryptedMessage[i]);
+
+		MessageIndexes[i] = EncrIndexes[i] - KeyIndexes[i];
+		if(MessageIndexes[i] < 0)
+			MessageIndexes[i] += LenAlphabet;
+	}
+}
+
+
+int main()
+{
+	getline(cin,Message);
+
+	SwapHalves(Message);
+
+	GetStuff();
+
+	for(int i=0;i<LenEncr;i++)
+		cout << Alphabet[ MessageIndexes[i] ];
+	cout << endl;
+
+	delete[] KeyIndexes;
+	delete[] EncrIndexes;
+	delete[] MessageIndexes;
+
+	return 0;
+}
