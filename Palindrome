@@ -45,7 +45,6 @@ int main()
 		if(out!="")
 		{
 			printf("%s\n",out.c_str());
-//			cout << out << endl;
 			count ++;
 		}
 	}
