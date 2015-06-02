@@ -1,0 +1,123 @@
+#include <iostream>
+#include <string>
+#include <stdlib>
+
+using namespace std;
+
+bool CountOpen[3];
+int Count[3];
+
+
+bool IsDigit(const char &c)
+{
+	if(c>='0' && c<='9')
+		return true;
+
+	return false;
+}
+
+bool CheckBrackets(const char &c) // if wrong return true
+{
+	switch(c)
+	{
+    // Correctly opened
+		case	'{'	:
+			if(Count[0] || Count[1] || Count[2]) // if any bracket is opened
+				return true;
+
+			Count[2]++;
+			CountOpen[2]++;
+			break;
+		case	'['	:
+			if(CountOpen[0] || CountOpen[1]) // if '(' or '[' is opened
+				return true;
+
+			CountOpen[1]++;
+			Count[1]++;
+			break;
+		case	'('	:
+			if(CountOpen[0] || (CountOpen[2] && !CountOpen[1])) // if '(' or ('{' withour '[') is opened
+				return true;
+
+			CountOpen[0]++;
+			Count[0]++;
+			break;
+		// Correctly closed
+		case	'}'	:
+			if(CountOpen[0] || CountOpen[1] || CountOpen[2]==0) // if not '{' or something else is opened
+				return true;
+
+			CountOpen[2]--;
+			break;
+		case	']'	:
+			if(CountOpen[0] || CountOpen[1]==0) // if '(' not closed or '[' not opened
+				return true;
+
+			CountOpen[1]--;
+			break;
+		case	')'	:
+			if(CountOpen[0]==0) // if '(' not opened
+				return true;
+
+			CountOpen[0]--;
+			break;
+	}
+
+	return false;
+}
+
+int Calculate(const string &s)
+{
+	if(s=="")
+		return 0;
+
+	int Multiplier;
+	if(CountOpen[2] && CountOpen[1] && CountOpen[0]) // in {[()]}
+		Multiplier=4;
+	else if((CountOpen[1] && CountOpen[0]) || (CountOpen[2] && CountOpen[1])) // in {[]} or [()]
+		Multiplier=2;
+	else // only in one type - () xor [] xor {}
+		Multiplier=1;
+
+	int numb=atoi(s.c_str()); // cast string to number
+
+	return (numb*Multiplier);
+}
+
+int main()
+{
+	string input;
+	cin >> input;
+	int len=input.length();
+
+	if(IsDigit(input[0]) || IsDigit(input[len-1])) // leading and trailing digits
+	{
+		cout << "NO" << endl;
+		return 0;
+	}
+
+	int Result=0;
+	string CurNumb="";
+	for(int i=0;i<len;i++)
+	{
+		if(!IsDigit(input[i]))
+		{
+			Result+=Calculate(CurNumb); // calculate current number by the rules
+			CurNumb=""; // clear current number
+
+			if(CheckBrackets(input[i])) // if wrong, return true
+			{
+				cout << "NO" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			CurNumb+=input[i]; // if it is digit, add it to current number
+		}
+	}
+
+	cout << Result << endl;
+
+	return 0;
+}
