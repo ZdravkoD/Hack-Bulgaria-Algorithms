@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
-#include <stdlib>
+#include <cstdlib>
 
 using namespace std;
 
-bool CountOpen[3];
+int CountOpen[3];
 int Count[3];
 
 
@@ -95,6 +95,17 @@ int main()
 		cout << "NO" << endl;
 		return 0;
 	}
+	
+	char OuterMost = input[0];
+	for(int i=1;i<len;i++) // check Outermost bracket
+	{
+		if(input[i] == OuterMost)
+		{
+			cout << "NO" << endl;
+			return 0;
+   	}
+	}
+	
 
 	int Result=0;
 	string CurNumb="";
