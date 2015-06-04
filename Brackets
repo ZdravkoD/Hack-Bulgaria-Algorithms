@@ -90,7 +90,7 @@ int main()
 	cin >> input;
 	int len=input.length();
 
-	if(IsDigit(input[0]) || IsDigit(input[len-1])) // leading and trailing digits
+	if(IsDigit(input[0]) || IsDigit(input[len-1]) || (input[0]!=input[len-1])) // leading and trailing digits
 	{
 		cout << "NO" << endl;
 		return 0;
